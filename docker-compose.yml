@@ -24,7 +24,7 @@ services:
  
   # Dedicated client container
   fika_dedi:
-    image: ghcr.io/zhliau/fika-headless-docker:latest
+    image: ghcr.io/kwarkzakken/fika-headless-docker:latest
     container_name: fika_dedi
     volumes:
       # Set this to the path on the host to the FIKA client files

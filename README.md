@@ -33,7 +33,7 @@
 > 
 > Having said this, many users including myself have successfully used this image to host headless clients on Linux. If you are still determined to do this, read each step in the [Running](#-running) section carefully and make sure to follow instructions thoroughly.
 > 
-> If you run into trouble, do **NOT** ask for support in the official Fika Discord for this image. First check the [troubleshooting wiki page](https://github.com/zhliau/fika-headless-docker/wiki/%F0%9F%A7%B0-Troubleshooting), and then open an issue in this repo if your problem still isn't solved.
+> If you run into trouble, do **NOT** ask for support in the official Fika Discord for this image. First check the [troubleshooting wiki page](https://github.com/kwarkzakken/fika-headless-docker/wiki/%F0%9F%A7%B0-Troubleshooting), and then open an issue in this repo if your problem still isn't solved.
 ## What is a Headless Client?
 
 The Fika headless client is a separate instance of the game client that runs without a display. It acts as a "silent player" that hosts the raid, allowing other players to join raids without one of them having to host the raid on their own machine.
@@ -50,7 +50,7 @@ The Fika headless client is a separate instance of the game client that runs wit
 # 📦 Releases
 The image build is triggered off git tags and hosted on ghcr. `latest` will always point to the latest version.
 ```
-docker pull ghcr.io/zhliau/fika-headless-docker:latest
+docker pull ghcr.io/kwarkzakken/fika-headless-docker:latest
 ```
 
 # 🚤 Running
@@ -147,14 +147,14 @@ docker pull ghcr.io/zhliau/fika-headless-docker:latest
        -e SERVER_URL=your.spt.server.ip \
        -e SERVER_PORT=6969 \
        -p 25565:25565/udp \
-       ghcr.io/zhliau/fika-headless-docker:latest
+        ghcr.io/kwarkzakken/fika-headless-docker:latest
      ```
 
      With docker-compose file:
      ```yaml
      services:
        fika_headless:
-         image: ghcr.io/zhliau/fika-headless-docker:latest
+         image: ghcr.io/kwarkzakken/fika-headless-docker:latest
          volumes:
            - /host/path/to/fika:/opt/tarkov
          environment:
@@ -177,7 +177,7 @@ docker pull ghcr.io/zhliau/fika-headless-docker:latest
          ports:
            - 6969:6969
        fika_headless:
-         image: ghcr.io/zhliau/fika-headless-docker:latest
+         image: ghcr.io/kwarkzakken/fika-headless-docker:latest
          # ...
          environment:
            # ...
@@ -256,10 +256,10 @@ docker pull ghcr.io/zhliau/fika-headless-docker:latest
 
 
 ## Corter-Modsync support
-See [this wiki article](https://github.com/zhliau/fika-headless-docker/wiki/Corter%E2%80%90Modsync-support) for information on how to enable Corter-Modsync support.
+See [this wiki article](https://github.com/kwarkzakken/fika-headless-docker/wiki/Corter%E2%80%90Modsync-support) for information on how to enable Corter-Modsync support.
 
 ## Wine Synchronization Methods
-See [this wiki page](https://github.com/zhliau/fika-headless-docker/wiki/Wine-synchronization-methods) on the supported winesync methods and how to enable them.
+See [this wiki page](https://github.com/kwarkzakken/fika-headless-docker/wiki/Wine-synchronization-methods) on the supported winesync methods and how to enable them.
 
 # 🌐 Environment variables
 ## Required
@@ -279,9 +279,9 @@ See [this wiki page](https://github.com/zhliau/fika-headless-docker/wiki/Wine-sy
 | `USE_MODSYNC`                  | If set to `true`, enables support for Corter-ModSync 0.8.1+ and the external updater. On container start, the headless client will close and start the updater the modsync plugin detects changes. On completion, the script will start the headless client up again |
 | `ENABLE_LOG_PURGE`             | If set to `true`, automatically purge the EFT `Logs/` directory every 00:00 UTC, to clear out large logfiles due to logspam. |
 | `AUTO_RESTART_ON_RAID_END`     | If set to `true`, auto restart the client on raid end, freeing all memory that isn't cleared properly on raid end |
-| `ESYNC`                        | If set to `true`, enable wine esync, to use eventfd based synchronization instead of wineserver. This can improve client performance. Check compatibility by `ulimit -Hn`. If this value is less than `524288`, you need to increase your system's process file descriptor limit. See this [troubleshooting tip](https://github.com/zhliau/fika-headless-docker/wiki/%F0%9F%A7%B0-Troubleshooting#im-using-esync-but-my-client-crashes). |
+| `ESYNC`                        | If set to `true`, enable wine esync, to use eventfd based synchronization instead of wineserver. This can improve client performance. Check compatibility by `ulimit -Hn`. If this value is less than `524288`, you need to increase your system's process file descriptor limit. See this [troubleshooting tip](https://github.com/kwarkzakken/fika-headless-docker/wiki/%F0%9F%A7%B0-Troubleshooting#im-using-esync-but-my-client-crashes). |
 | `FSYNC`                        | If set to `true`, enable wine fsync, to use futex based synchronization instead of wineserver. This can dramatically improve client performance. Takes precedence over ESYNC. Requires linux kernel version >= 5.16. Check compatibility via kernel syscall availability with `cat /proc/kallsyms | grep futex_waitv`. |
-| `NTSYNC`                       | If set to `true`, enable wine ntsync, to use a wine binary compiled with support for kernel level implementation of Windows NT synchronization primitives, the latest and potentially highest performing synchronization method. This can dramatically improve client performance. Takes precedence over FSYNC or ESYNC. Requires ntsync support in your host kernel. See [this wiki page](https://github.com/zhliau/fika-headless-docker/wiki/Wine-synchronization-methods) for details |
+| `NTSYNC`                       | If set to `true`, enable wine ntsync, to use a wine binary compiled with support for kernel level implementation of Windows NT synchronization primitives, the latest and potentially highest performing synchronization method. This can dramatically improve client performance. Takes precedence over FSYNC or ESYNC. Requires ntsync support in your host kernel. See [this wiki page](https://github.com/kwarkzakken/fika-headless-docker/wiki/Wine-synchronization-methods) for details |
 
 ## Debug
 
@@ -294,7 +294,7 @@ See [this wiki page](https://github.com/zhliau/fika-headless-docker/wiki/Wine-sy
 | `SAVE_LOG_ON_EXIT`         | If set to `true`, save a copy of the BepInEx `LogOutput.log` as `LogOutput-$timestamp.log` on client exit to preserve logs from previous client runs, since this file is truncated each time the client starts |
 
 # 🧰 Troubleshooting
-See [this wiki page](https://github.com/zhliau/fika-headless-docker/wiki/%F0%9F%A7%B0-Troubleshooting) for common problems and solutions.
+See [this wiki page](https://github.com/kwarkzakken/fika-headless-docker/wiki/%F0%9F%A7%B0-Troubleshooting) for common problems and solutions.
 
 # 💻 Development
 ### Building
@@ -322,7 +322,7 @@ services:
     image: ghcr.io/zhliau/fika-spt-server-docker:latest
     # ...
   fika_headless:
-    image: ghcr.io/zhliau/fika-headless-docker:latest
+    image: ghcr.io/kwarkzakken/fika-headless-docker:latest
     container_name: fika_ded
     volumes:
       - /host/path/to/fika:/opt/tarkov

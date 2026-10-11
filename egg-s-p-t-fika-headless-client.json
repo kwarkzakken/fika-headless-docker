@@ -6,13 +6,13 @@
     },
     "exported_at": "2025-04-25T10:03:18+00:00",
     "name": "SPT Fika Headless Client",
-    "author": "dazzuh@radiant.dj",
+    "author": "gay@lord.com",
     "uuid": "f4bb2b79-d64c-4c4e-aefd-876c36cdb9cd",
-    "description": "SPT Fika Headless egg based on https:\/\/github.com\/zhliau\/fika-headless-docker",
+    "description": "SPT Fika Headless egg based on https:\/\/github.com\/kwarkzakken\/fika-headless-docker",
     "tags": [],
     "features": [],
     "docker_images": {
-        "ghcr.io\/zhliau\/fika-headless-docker:latest": "ghcr.io\/zhliau\/fika-headless-docker:latest"
+        "ghcr.io\/kwarkzakken\/fika-headless-docker:latest": "ghcr.io\/kwarkzakken\/fika-headless-docker:latest"
     },
     "file_denylist": [],
     "startup": "echo \"Startup Recieved\"",
@@ -80,7 +80,7 @@
         },
         {
             "name": "ESYNC",
-            "description": "If set to true, enable wine esync, to use eventfd based synchronization instead of wineserver. This can improve client performance. Check compatibility by ulimit -Hn. If this value is less than 524288, you need to increase your system's process file descriptor limit. See this troubleshooting tip: https:\/\/github.com\/zhliau\/fika-headless-docker\/wiki\/%F0%9F%A7%B0-Troubleshooting#im-using-esync-but-my-client-crashes",
+            "description": "If set to true, enable wine esync, to use eventfd based synchronization instead of wineserver. This can improve client performance. Check compatibility by ulimit -Hn. If this value is less than 524288, you need to increase your system's process file descriptor limit. See this troubleshooting tip: https:\/\/github.com\/kwarkzakken\/fika-headless-docker\/wiki\/%F0%9F%A7%B0-Troubleshooting#im-using-esync-but-my-client-crashes",
             "env_variable": "ESYNC",
             "default_value": "false",
             "user_viewable": true,
@@ -117,7 +117,7 @@
         },
         {
             "name": "NTSYNC",
-            "description": "If set to true, enable wine ntsync, to use a wine binary compiled with support for kernel level implementation of Windows NT synchronization primitives, the latest and potentially highest performing synchronization method. This can dramatically improve client performance. Takes precedence over FSYNC or ESYNC. Requires ntsync support in your host kernel. See this wiki page for details: https:\/\/github.com\/zhliau\/fika-headless-docker\/wiki\/Wine-synchronization-methods",
+            "description": "If set to true, enable wine ntsync, to use a wine binary compiled with support for kernel level implementation of Windows NT synchronization primitives, the latest and potentially highest performing synchronization method. This can dramatically improve client performance. Takes precedence over FSYNC or ESYNC. Requires ntsync support in your host kernel. See this wiki page for details: https:\/\/github.com\/kwarkzakken\/fika-headless-docker\/wiki\/Wine-synchronization-methods",
             "env_variable": "NTSYNC",
             "default_value": "false",
             "user_viewable": true,

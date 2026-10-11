@@ -68,8 +68,6 @@ RUN cp -r $(find . -type d -name wine-tkg-staging-ntsync-git*) /wine-tkg-ntsync
 
 FROM base
 
-ARG WINE_BRANCH="stable"
-
 COPY --from=wine-builder /wine-tkg-ntsync /wine-tkg-ntsync
 WORKDIR /
 
@@ -101,37 +99,29 @@ ENV VIDEO_PORT=DFP
 
 ENV TERM=xterm
 
-# wine-ge
+# Wine 11 staging-tkg WoW64, as recommended by the Fika headless image gist.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     cron \
-    xz-utils
-RUN mkdir /wine-ge && \
-    curl -sL "https://github.com/GloriousEggroll/wine-ge-custom/releases/download/GE-Proton8-26/wine-lutris-GE-Proton8-26-x86_64.tar.xz" | tar xvJ -C /wine-ge
-RUN mv /wine-ge/lutris-GE-Proton8-26-x86_64/* /wine-ge
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /wine-tkg && \
+    curl -fsSL "https://github.com/Kron4ek/Wine-Builds/releases/download/11.2/wine-11.2-staging-tkg-amd64-wow64.tar.xz" | \
+    tar -xJ --strip-components=1 -C /wine-tkg
 
 ENV WINE_NTSYNC_BIN_PATH=/wine-tkg-ntsync/bin
-ENV WINE_BIN_PATH=/wine-ge/bin
-
-# Add wine repos and install stable wine
-# This is required to run wineboot properly
-RUN sudo mkdir -pm755 /etc/apt/keyrings \
-    && sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key \
-    && sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources \
-    && dpkg --add-architecture i386 \
-    && apt-get update \
-    && DEBIAN_FRONTEND="noninteractive" apt-get install -y --install-recommends winehq-${WINE_BRANCH} zstd libc-bin libc6 \
-    && rm -rf /var/lib/apt/lists/*
+ENV WINE_BIN_PATH=/wine-tkg/bin
+ENV PATH="/wine-tkg/bin:${PATH}"
 
 # Install wineprefix deps
-RUN winecfg && wineboot --update && xvfb-run -a winetricks -q arial times
+RUN "$WINE_BIN_PATH/winecfg" && "$WINE_BIN_PATH/wineboot" --update && xvfb-run -a winetricks -q arial times
 # Cache vcredist installer direct from MS to bypass downloading from web.archive.org
 RUN mkdir -p /.cache/winetricks/ucrtbase2019
 RUN curl -SL 'https://download.visualstudio.microsoft.com/download/pr/85d47aa9-69ae-4162-8300-e6b7e4bf3cf3/14563755AC24A874241935EF2C22C5FCE973ACB001F99E524145113B2DC638C1/VC_redist.x86.exe' \
     -o /.cache/winetricks/ucrtbase2019/VC_redist.x86.exe
 RUN curl -SL 'https://download.visualstudio.microsoft.com/download/pr/85d47aa9-69ae-4162-8300-e6b7e4bf3cf3/52B196BBE9016488C735E7B41805B651261FFA5D7AA86EB6A1D0095BE83687B2/VC_redist.x64.exe' \
     -o /.cache/winetricks/ucrtbase2019/VC_redist.x64.exe
-RUN winecfg && wineboot --update && xvfb-run -a winetricks -q vcrun2019 dotnetdesktop8
+RUN "$WINE_BIN_PATH/winecfg" && "$WINE_BIN_PATH/wineboot" --update && xvfb-run -a winetricks -q vcrun2019 dotnetdesktop8
 
 COPY ./scripts/purge_logs.sh /usr/bin/purge_logs
 COPY ./data/cron/cron_purge_logs /opt/cron/cron_purge_logs

@@ -47,8 +47,8 @@ FROM base
 
 WORKDIR /
 
-# latest winetricks
-RUN curl -SL 'https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks' -o /usr/local/bin/winetricks \
+# Pin Winetricks to the revision used by the Fika headless Wine image gist.
+RUN curl -fsSL 'https://raw.githubusercontent.com/Winetricks/winetricks/81a692e2ee6b311367f18a17a9a61a0ef1c0ad18/src/winetricks' -o /usr/local/bin/winetricks \
     && chmod +x /usr/local/bin/winetricks
 
 RUN locale-gen en_US.UTF-8

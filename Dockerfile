@@ -43,32 +43,8 @@ RUN apt-get update \
     xserver-xorg-core \
     xvfb
 
-# Build wine-tkg-ntsync
-FROM debian:bookworm AS wine-builder
-
-USER root
-WORKDIR /opt
-RUN dpkg --add-architecture i386 && apt update
-RUN apt install -y aptitude curl git tar
-RUN aptitude remove -y '?narrow(?installed,?version(deb.sury.org))'
-RUN curl --create-dirs -o /usr/include/linux/ntsync.h https://raw.githubusercontent.com/torvalds/linux/13845bdc869f136f92ad3d40ea09b867bb4ce467/include/uapi/linux/ntsync.h
-RUN git clone https://github.com/Frogging-Family/wine-tkg-git.git wine-tkg-ntsync
-
-WORKDIR /opt/wine-tkg-ntsync/
-# Temporarily fix build failure ever since pulling from upstream wine-tkg-git
-RUN git checkout 26c0f63b0b1e5a699e181ccb40599ca36ae30a5b
-RUN cd wine-tkg-git && \
-    sed -i 's/ntsync="false"/ntsync="true"/' ./customization.cfg && \
-    sed -i 's/esync="true"/esync="false"/' ./customization.cfg && \
-    sed -i 's/fsync="true"/fsync="false"/' ./customization.cfg && \
-    sed -i 's/_NOLIB32="false"/_NOLIB32="wow64"/' ./wine-tkg-profiles/advanced-customization.cfg
-
-RUN cd wine-tkg-git && yes|./non-makepkg-build.sh
-RUN cp -r $(find . -type d -name wine-tkg-staging-ntsync-git*) /wine-tkg-ntsync
-
 FROM base
 
-COPY --from=wine-builder /wine-tkg-ntsync /wine-tkg-ntsync
 WORKDIR /
 
 # latest winetricks
@@ -99,17 +75,18 @@ ENV VIDEO_PORT=DFP
 
 ENV TERM=xterm
 
-# Wine 11 staging-tkg WoW64, as recommended by the Fika headless image gist.
+# Prebuilt Wine Staging-TkG WoW64; avoid rebuilding Wine from source in the image build.
+ARG WINE_VERSION=11.19
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     cron \
     xz-utils \
     && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /wine-tkg && \
-    curl -fsSL "https://github.com/Kron4ek/Wine-Builds/releases/download/11.2/wine-11.2-staging-tkg-amd64-wow64.tar.xz" | \
+    curl -fsSL "https://github.com/Kron4ek/Wine-Builds/releases/download/${WINE_VERSION}/wine-${WINE_VERSION}-staging-tkg-amd64-wow64.tar.xz" | \
     tar -xJ --strip-components=1 -C /wine-tkg
 
-ENV WINE_NTSYNC_BIN_PATH=/wine-tkg-ntsync/bin
+ENV WINE_NTSYNC_BIN_PATH=/wine-tkg/bin
 ENV WINE_BIN_PATH=/wine-tkg/bin
 ENV PATH="/wine-tkg/bin:${PATH}"
 
